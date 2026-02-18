@@ -185,30 +185,90 @@
         let isPaused = false;
         let stopRequested = false;
 
-        // Randomization Assets
-        const THEMES = ["Lifestyle", "Business & Corporate", "Nature & Landscapes", "Technology & Future", "Food & Culinary", "Travel & Adventure", "Health & Wellness", "Architecture", "Education", "Industrial & Logistics"];
-        const LIGHTING = ["Golden Hour", "Soft Studio Lighting", "Dramatic High-Contrast", "Moody Cinematic Dark", "Bright & Airy Natural Light", "Overcast Softbox", "Backlit Rim Lighting"];
-        const COMPOSITIONS = ["Wide Angle", "Extreme Close-up", "Low Angle Looking Up", "Flat Lay / Bird's Eye", "Symmetric", "Rule of Thirds", "Macro Detail", "Candid Motion Blur"];
-        const ANONYMOUS_SUBJECTS = [
-            "Silhouettes", 
-            "Hands only performing a task", 
-            "Back of head and shoulders view", 
-            "Purely environmental focus", 
-            "Scenarios without people", 
-            "Close-up of textures and materials", 
-            "Shadow play on surfaces",
-            "Feet walking or standing",
-            "Lower body in motion",
-            "Over-the-shoulder perspective",
-            "Hands interacting with technology",
-            "Extreme close-up of a hand holding an object",
-            "Blurred figures in the distance",
-            "Reflections in windows or glass",
-            "Candid shot from behind",
-            "Action shots focusing on legs/feet",
-            "Minimalist setup with no subjects",
-            "Hands preparing food or drink",
-            "Back view of a person looking at scenery"
+        // Fused Randomization Assets: Scenario + Anonymous Subject + Theme
+        const SCENARIOS = [
+            // Business & Technology
+            "Hands of a business person",
+            "Silhouette of a CEO",
+            "Over-the-shoulder view of a person",
+            "Business meeting silhouettes",
+            "Hands pointing",
+            "Hands interacting",
+            "Back view of a person",
+            "Hands holding something",
+            "Close-up of fingers",
+            "Silhouette of professionals",
+
+            // Ecology & Nature
+            "Hands cupping",
+            "Silhouette of a person standing",
+            "Hands planting",
+            "Over-the-shoulder view of someone",
+            "landscape",
+            "Hands recycling",
+            "Macro texture",
+            "road",
+
+            // Education & School
+            "student",
+            "Silhouette of a student",
+            "graduation",
+            "teacher",
+            "students sitting",
+            "Silhouette of a person",
+            "Hands of a child",
+
+            // Healthcare & Wellness
+            "medica",
+            "doctor",
+            "Over-the-shoulder view of a patient",
+            "pharmacist",
+            "meditating",
+            "jogging",
+
+            // Food, Culinary & Objects
+            "kneading",
+            "wooden",
+            "pouring",
+            "cosmetic",
+            "chef",
+            "Objects pure white background",
+            "warm",
+            "Macro detail",
+
+            // Industrial & Infrastructure
+            "Hands of a worker",
+            "Silhouette of a construction worker",
+            "Over-the-shoulder view of a technician",
+            "Abstract view",
+            "adjusting",
+            "engineer"
+        ];
+
+        const LIGHTING = [
+            "Golden Hour (warm, natural orange glow)",
+            "Soft Studio Lighting (diffused, commercial)",
+            "Dramatic High-Contrast (sharp shadows)",
+            "Moody Cinematic Dark (low key)",
+            "Bright & Airy Natural Light (clean, white)",
+            "Neon Night / Cyberpunk blue and pink glow",
+            "Overcast Softbox effect (neutral)",
+            "Backlit Rim Lighting (glowing edges)",
+            "Cool Fluorescent Laboratory light",
+            "Warm Candlelight / Intimate glow"
+        ];
+
+        const COMPOSITIONS = [
+            "Wide Angle (context focused)",
+            "Extreme Close-up (Macro detail)",
+            "Low Angle Looking Up (powerful)",
+            "Flat Lay / Top Down (organized)",
+            "Symmetric (balanced)",
+            "Rule of Thirds (dynamic)",
+            "Minimalist Negative Space",
+            "Over-the-shoulder (first-person feel)",
+            "Tilted Dutch Angle (action oriented)",
+            "Frame-within-a-frame"
         ];
 
         const SYSTEM_PROMPT = `You are a world-class AI prompt engineer specialized in commercial stock photography. 
@@ -228,7 +288,6 @@ Output ONLY the prompt text, no headers, no quotes, no explanations.`;
         const loaderText = document.getElementById('loaderText');
         const statusIndicator = document.getElementById('statusIndicator');
 
-        // Buttons
         const startBtn = document.getElementById('startBtn');
         const pauseBtn = document.getElementById('pauseBtn');
         const stopBtn = document.getElementById('stopBtn');
@@ -248,19 +307,14 @@ Output ONLY the prompt text, no headers, no quotes, no explanations.`;
             }
         }
 
-        // --- UI Utils ---
         function showToast(msg, type = "success") {
             const toast = document.getElementById('toast');
             const icon = document.getElementById('toastIcon');
             const msgEl = document.getElementById('toastMsg');
-            
             msgEl.textContent = msg;
             icon.className = type === "success" ? "fa-solid fa-circle-check text-green-500" : "fa-solid fa-triangle-exclamation text-red-500";
-            
             toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
+            setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 3000);
         }
 
         function updateProgress() {
@@ -305,22 +359,17 @@ Output ONLY the prompt text, no headers, no quotes, no explanations.`;
             updateProgress();
         }
 
-        // --- Core Logic ---
-
         async function handleStart() {
             const key = apiKeyInput.value.trim();
             if (!key) return showToast("Please enter an API Key", "error");
-            
             isProcessing = true;
             isPaused = false;
             stopRequested = false;
-            
             startBtn.disabled = true;
             pauseBtn.disabled = false;
             stopBtn.disabled = false;
             statusIndicator.textContent = "Running";
             statusIndicator.className = "text-[10px] px-2 py-0.5 rounded-full bg-blue-900/30 text-blue-400 border border-blue-800 italic";
-
             generateLoop();
         }
 
@@ -328,7 +377,6 @@ Output ONLY the prompt text, no headers, no quotes, no explanations.`;
             isPaused = !isPaused;
             pauseBtn.innerHTML = isPaused ? '<i class="fa-solid fa-play mr-1"></i> Resume' : '<i class="fa-solid fa-pause mr-1"></i> Pause';
             statusIndicator.textContent = isPaused ? "Paused" : "Running";
-            statusIndicator.className = isPaused ? "text-[10px] px-2 py-0.5 rounded-full bg-yellow-900/30 text-yellow-400 border border-yellow-800 italic" : "text-[10px] px-2 py-0.5 rounded-full bg-blue-900/30 text-blue-400 border border-blue-800 italic";
         }
 
         function handleStop() {
@@ -366,7 +414,6 @@ Output ONLY the prompt text, no headers, no quotes, no explanations.`;
                 activeLoader.classList.add('hidden');
 
                 if (prompts.length < target && !stopRequested) {
-                    // Start countdown for next one
                     let remaining = delayMs;
                     while (remaining > 0 && !stopRequested && !isPaused) {
                         loaderText.textContent = `Delaying... ${Math.ceil(remaining/1000)}s`;
@@ -377,7 +424,6 @@ Output ONLY the prompt text, no headers, no quotes, no explanations.`;
                     activeLoader.classList.add('hidden');
                 }
             }
-
             finishProcessing();
         }
 
@@ -386,16 +432,9 @@ Output ONLY the prompt text, no headers, no quotes, no explanations.`;
             startBtn.disabled = false;
             pauseBtn.disabled = true;
             stopBtn.disabled = true;
-            pauseBtn.innerHTML = '<i class="fa-solid fa-pause mr-1"></i> Pause';
             activeLoader.classList.add('hidden');
             statusIndicator.textContent = "Idle";
-            statusIndicator.className = "text-[10px] px-2 py-0.5 rounded-full bg-gray-800 text-gray-400 border border-gray-700 italic";
-            
-            if (prompts.length >= parseInt(targetInput.value)) {
-                showToast("Target reached!", "success");
-            } else if (stopRequested) {
-                showToast("Generation stopped", "success");
-            }
+            if (prompts.length >= parseInt(targetInput.value)) showToast("Target reached!", "success");
         }
 
         function getRandomItem(arr) {
@@ -403,20 +442,16 @@ Output ONLY the prompt text, no headers, no quotes, no explanations.`;
         }
 
         async function callGroq(key, model) {
-            // Create a randomized "seed" context to force variety
-            const theme = getRandomItem(THEMES);
+            const scenario = getRandomItem(SCENARIOS);
             const lighting = getRandomItem(LIGHTING);
             const composition = getRandomItem(COMPOSITIONS);
-            const anonymousMode = getRandomItem(ANONYMOUS_SUBJECTS);
-            const randomSeed = Math.random().toString(36).substring(7);
 
-            const userPrompt = `Generate a unique, high-quality stock photography prompt. 
-            Theme: ${theme}. 
-            Lighting: ${lighting}. 
-            Composition: ${composition}. 
-            Style focus: ${anonymousMode}.
-            Context Seed: ${randomSeed}. 
-            REMINDER: Strictly NO FACES. Focus on environmental details, hands, or silhouettes for a commercial look.`;
+            const userPrompt = `Create a high-quality stock photography prompt. 
+            Scenario: ${scenario}.
+            Lighting: ${lighting}.
+            Composition: ${composition}.
+            
+            REMINDER: Keep it commercially viable and strictly NO FACES.`;
 
             const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                 method: "POST",
@@ -444,20 +479,13 @@ Output ONLY the prompt text, no headers, no quotes, no explanations.`;
             return data.choices[0].message.content.trim();
         }
 
-        // --- Excel Export ---
         function downloadExcel() {
             if (prompts.length === 0) return;
-
-            // Create data structure: Array of arrays (one column)
             const data = prompts.map(p => [p]);
-            
             const worksheet = XLSX.utils.aoa_to_sheet(data);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Prompts");
-            
-            // Generate filename with timestamp
-            const date = new Date().toISOString().slice(0, 10);
-            XLSX.writeFile(workbook, `stock_prompts_anonymous_${date}.xlsx`);
+            XLSX.writeFile(workbook, `stock_prompts_${new Date().toISOString().slice(0, 10)}.xlsx`);
             showToast("Excel file downloaded");
         }
     </script>
