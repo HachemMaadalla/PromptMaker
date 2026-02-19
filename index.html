@@ -306,7 +306,7 @@
 Your task is to generate highly detailed, realistic, and commercially viable image generation prompts for a stock photo website.
 CRITICAL RULE: DO NOT include human or animal faces.
 RANDOMIZATION RULE: For the provided category, brainstorm and select a random, specific, and unique sub-scenario. Do not pick the most obvious interpretation; instead, choose an unexpected and high-value commercial scene within that category.
-VARIETY REQUIREMENT: Use the provided category to create a unique scene.
+VARIETY REQUIREMENT: Use the provided category to create a unique scene. You MUST stick to the specific category provided. Brainstorm an unexpected sub-scenario within that field.
 Output ONLY the prompt text. No explanations, no headers, no quotation marks.`;
         
         const apiKeyInput = document.getElementById('apiKey');
@@ -483,7 +483,10 @@ Output ONLY the prompt text. No explanations, no headers, no quotation marks.`;
                     model: model,
                     messages: [
                         { role: "system", content: SYSTEM_PROMPT },
-                        { role: "user", content: `Generate one unique and detailed stock photography prompt. Category: ${nudge}. Focus on commercial aesthetics and professional lighting.` }
+                        { role: "user", content: `You MUST generate a prompt for the specific category: ${nudge}. 
+                        Instructions:
+                        1. Think of a very specific, detailed sub-niche inside "${nudge}".
+                        2. Describe a commercially appealing scene with professional lighting and composition.` }
                     ],
                     temperature: 1.0, 
                     max_tokens: 400
