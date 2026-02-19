@@ -89,6 +89,7 @@
                             <select id="modelSelect" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:border-blue-500 outline-none appearance-none">
                                 <option value="llama-3.3-70b-versatile">Llama 3.3 70B (Best Quality)</option>
                                 <option value="llama-3.1-8b-instant">Llama 3.1 8B (Fastest)</option>
+                                <option value="meta-llama/llama-4-scout-17b-16e-instruct">Groq (Llama 4 Scout)</option>
                             </select>
                         </div>
                     </div>
@@ -307,7 +308,7 @@ CRITICAL RULE: DO NOT include human or animal faces.
 RANDOMIZATION RULE: For the provided category, brainstorm and select a random, specific, and unique sub-scenario. Do not pick the most obvious interpretation; instead, choose an unexpected and high-value commercial scene within that category.
 VARIETY REQUIREMENT: Use the provided category to create a unique scene.
 Output ONLY the prompt text. No explanations, no headers, no quotation marks.`;
-
+        
         const apiKeyInput = document.getElementById('apiKey');
         const targetInput = document.getElementById('targetCount');
         const delayInput = document.getElementById('delaySeconds');
