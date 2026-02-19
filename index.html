@@ -177,10 +177,133 @@
         let isPaused = false;
         let stopRequested = false;
 
+        // General Variety Nudges (Categorical instead of specific)
+        const NUDGES = [
+    // Business & Corporate
+    "Business", "Corporate", "Finance", "Banking", "Accounting",
+    "Investment", "Budgeting", "Savings", "Insurance",
+    "Startup", "Entrepreneurship", "Leadership", "Teamwork",
+    "Office", "Remote Work", "Coworking", "Productivity",
+    "Strategy", "Planning", "Data Analytics", "Growth",
+    "Success", "Innovation", "Consulting",
+
+    // Technology
+    "Technology", "Artificial Intelligence", "Machine Learning",
+    "Cybersecurity", "Cloud Computing", "Data Center",
+    "Programming", "Software Development", "Mobile Apps",
+    "Automation", "Digital Transformation", "Big Data",
+    "Server Room", "Blockchain Technology",
+
+    // Healthcare
+    "Healthcare", "Hospital", "Doctor", "Nurse",
+    "Clinic", "Pharmacy", "Mental Health",
+    "Telemedicine", "Laboratory", "Vaccination",
+    "Wellness", "Healthy Lifestyle", "Elder Care",
+
+    // Lifestyle & People (High Demand)
+    "Lifestyle", "Family", "Parenting", "Friendship",
+    "Work Life Balance", "Morning Routine",
+    "Self Care", "Mindfulness", "Meditation",
+    "Home Office", "Happiness", "Relaxation",
+    "Digital Nomad", "Urban Living",
+    "Diversity", "Multicultural", "Senior Citizens",
+    "Children Playing", "Couple", "Portrait",
+
+    // Food & Beverage (Expanded)
+    "Food", "Healthy Food", "Organic Food", "Fast Food",
+    "Street Food", "Fine Dining", "Home Cooking",
+    "Baking", "Desserts", "Pastry",
+    "Coffee", "Tea", "Wine", "Cocktails",
+    "Breakfast", "Lunch", "Dinner",
+    "Food Flat Lay", "Food Background",
+    "Fresh Ingredients", "Farm to Table",
+    "Vegan", "Vegetarian", "Seafood",
+    "Grilled Food", "Traditional Cuisine",
+
+    // Art & Creative
+    "Art", "Painting", "Modern Art",
+    "Abstract Art", "Street Art",
+    "Digital Art", "Watercolor",
+    "Oil Painting", "Creative Studio",
+    "Artist Workspace", "Sketching",
+    "Handmade", "Crafts", "DIY",
+    "Calligraphy", "Minimal Art",
+    "Wall Art Mockup",
+
+    // Landscape & Travel
+    "Landscape", "Mountain", "Beach",
+    "Ocean", "Forest", "Desert",
+    "Sunset", "Sunrise",
+    "City Skyline", "Urban Landscape",
+    "Countryside", "Lake", "River",
+    "Travel", "Adventure",
+    "Road Trip", "Camping",
+    "Hiking", "Tropical Island",
+    "Aerial View", "Drone Shot",
+
+    // Nature & Environment
+    "Nature", "Wildlife", "Flowers",
+    "Botanical", "Rainforest",
+    "Sustainability", "Recycling",
+    "Climate Change", "Green Energy",
+    "Solar Panels", "Wind Turbines",
+
+    // Industry & Infrastructure
+    "Industrial", "Manufacturing", "Construction",
+    "Engineering", "Logistics", "Warehouse",
+    "Shipping", "Supply Chain",
+    "Energy", "Electric Vehicles",
+
+    // Retail & Ecommerce
+    "Retail", "Ecommerce", "Online Shopping",
+    "Shopping Cart", "Packaging",
+    "Small Business", "Marketplace",
+    "Fashion Retail", "Luxury Goods",
+
+    // Real Estate & Interior
+    "Real Estate", "Modern Apartment",
+    "Luxury Interior", "Interior Design",
+    "Home Decor", "Architecture",
+    "Smart Home", "Minimal Interior",
+
+    // Education
+    "Education", "Online Learning",
+    "University", "Classroom",
+    "Training", "Coaching",
+    "Student Life", "STEM Education",
+
+    // Fitness & Sports
+    "Fitness", "Gym", "Workout",
+    "Yoga", "Running",
+    "Healthy Body", "Outdoor Sports",
+
+    // Abstract & Backgrounds (Passive Income Gold)
+    "Abstract Background", "Gradient Background",
+    "Technology Background", "Corporate Background",
+    "Minimal Background", "Geometric Shapes",
+    "Futuristic Background", "Data Visualization",
+    "Infographic Template", "Social Media Template",
+    "Texture Background", "Marble Background",
+    "Concrete Texture", "Wood Texture",
+
+    // Seasonal & Commercial
+    "New Year", "Christmas", "Ramadan",
+    "Eid", "Black Friday",
+    "Summer Vacation", "Back to School",
+    "Valentines Day",
+
+    // Emotional & Conceptual (Very Profitable)
+    "Success Concept", "Teamwork Concept",
+    "Leadership Concept", "Stress",
+    "Burnout", "Motivation",
+    "Goal Setting", "Opportunity",
+    "Risk Management", "Problem Solving"
+];
+
+
         const SYSTEM_PROMPT = `You are a world-class AI prompt engineer specialized in commercial stock photography. 
-Your task is to generate highly detailed, commercially viable image generation prompts for a stock photo website.
-CRITICAL RULE: DO NOT include human or animal faces.
-Vary your ideas significantly.
+Your task is to generate highly detailed, realistic, and commercially viable image generation prompts for a stock photo website.
+VARIETY REQUIREMENT: Use the provided category to create a unique scene.
 Output ONLY the prompt text. No explanations, no headers, no quotation marks.`;
 
         const apiKeyInput = document.getElementById('apiKey');
@@ -345,6 +468,8 @@ Output ONLY the prompt text. No explanations, no headers, no quotation marks.`;
         }
 
         async function callGroq(key, model) {
+            const nudge = NUDGES[Math.floor(Math.random() * NUDGES.length)];
+            
             const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                 method: "POST",
                 headers: {
@@ -355,7 +480,7 @@ Output ONLY the prompt text. No explanations, no headers, no quotation marks.`;
                     model: model,
                     messages: [
                         { role: "system", content: SYSTEM_PROMPT },
-                        { role: "user", content: "Give me a unique, high-quality, and creative prompt for my stock photography website. Make it commercially appealing and detailed." }
+                        { role: "user", content: `Generate one unique and detailed stock photography prompt. Category: ${nudge}. Focus on commercial aesthetics and professional lighting.` }
                     ],
                     temperature: 1.0, 
                     max_tokens: 400
